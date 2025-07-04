@@ -2,23 +2,21 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_ENV = 'sonarqube'              // Must match Jenkins config
-        PROJECT_KEY   = 'my-simple-project'      // SonarQube project key
+        JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Nikesh0123/Maven-repo.git', branch: 'main'
+                git 'https://github.com/Nikesh0123/Maven-repo.git'
             }
         }
 
         stage('SonarQube Code Analysis') {
             steps {
-                dir('my-app') { // change this to the folder where pom.xml is located
-                    withSonarQubeEnv("${SONARQUBE_ENV}") {
-                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=${PROJECT_KEY}'
-                    }
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=my-simple-project'
                 }
             }
         }
