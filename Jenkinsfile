@@ -2,12 +2,12 @@ pipeline {
   agent any
 
   tools {
-    // This must match the name of Maven configured in Jenkins Global Tool Configuration
+    // This should match the Maven version name configured in Jenkins > Global Tool Configuration
     maven 'Maven 3'
   }
 
   environment {
-    // Replace with your actual branch and SonarQube instance name
+    // Replace with your correct branch and configured SonarQube instance name
     GIT_BRANCH = 'nikesh.developer'
     SONARQUBE_ENV = 'Your-SonarQube-Instance-Name'
   }
@@ -28,20 +28,19 @@ pipeline {
       }
     }
 
-    stage('Build & Archive Artifact') {
+    stage('Build JAR') {
       steps {
         sh 'mvn clean package'
-        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
       }
     }
   }
 
   post {
     success {
-      echo 'Build and analysis completed successfully.'
+      echo '✅ Build and SonarQube analysis completed successfully.'
     }
     failure {
-      echo 'Build failed. Please check the logs.'
+      echo '❌ Build failed. Please check the console output for errors.'
     }
   }
 }
