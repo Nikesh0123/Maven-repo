@@ -11,20 +11,23 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>hello-world Maven Webapp</name>
+    <name>hello-world Maven App</name>
     <url>http://maven.apache.org</url>
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- Servlet API Dependency (provided by Tomcat) -->
+        <!-- Remove javax.servlet if not needed for a JAR app -->
+        <!-- If you're building a simple console app, this is not needed -->
+        <!--
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+        -->
 
-        <!-- JUnit Dependency (optional for unit testing, included by default in your original) -->
+        <!-- JUnit for testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -35,11 +38,10 @@
 
     <!-- Build Settings -->
     <build>
-        <!-- Name of the final WAR file -->
         <finalName>hello-world</finalName>
 
-        <!-- Maven Compiler Plugin to compile with Java 17 -->
         <plugins>
+            <!-- Compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -50,16 +52,20 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven WAR Plugin -->
+            <!-- JAR plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
-                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.example.Main</mainClass> <!-- Update to your actual main class -->
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>
