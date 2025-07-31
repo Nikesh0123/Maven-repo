@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git branch: "${env.BRANCH_NAME}", url: 'https://github.com/Nikesh0123/Maven-repo.git'
+        git branch: "${env.nieksh.developer}", url: 'https://github.com/Nikesh0123/Maven-repo.git'
       }
     }
 
