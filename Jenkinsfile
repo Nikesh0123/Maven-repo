@@ -1,28 +1,35 @@
 pipeline {
-    agent any
+  agent any
 
-    parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
+  tools {
+    maven 'maven3' // if using Java/Maven project
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: "${env.BRANCH_NAME}", url: 'https://github.com/your-user/your-repo.git'
+      }
     }
 
-    environment {
-        JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: "${params.BRANCH_NAME}", url: 'https://github.com/Nikesh0123/Maven-repo.git'
-            }
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('Your-SonarQube-Instance-Name') {
+          sh 'mvn sonar:sonar'
         }
-
-        stage('SonarQube Code Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=my-simple-project'
-                }
-            }
-        }
+      }
     }
+
+    stage('Build Artifact') {
+      when {
+        expression {
+          return currentBuild.currentResult == 'SUCCESS'
+        }
+      }
+      steps {
+        sh 'mvn clean package'
+        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+      }
+    }
+  }
 }
