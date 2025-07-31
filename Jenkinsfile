@@ -1,48 +1,39 @@
 pipeline {
-  agent any
+    agent any
 
-  tools {
-    maven 'Maven 3'  // This must match the Maven installation name in Jenkins
-  }
-
-  environment {
-    SONARQUBE_ENV = 'SonarQube'  // Match this to the configured SonarQube server name in Jenkins
-  }
-
-  stages {
-    stage('Checkout Code') {
-      steps {
-        // In multibranch, Jenkins already checks out the branch — no need for manual checkout
-        echo "🚀 Building branch: ${env.BRANCH_NAME}"
-      }
+    environment {
+        SONARQUBE = credentials('sonarqube-token') // Optional if token-based auth
     }
 
-    stage('SonarQube Analysis') {
-      steps {
-        withSonarQubeEnv("${env.SONARQUBE_ENV}") {
-          sh """
-            mvn clean verify sonar:sonar \
-              -Dsonar.projectKey=hello-world \
-              -Dsonar.branch.name=${env.BRANCH_NAME}
-          """
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/your-user/hello-world.git', branch: 'nikesh.developer'
+            }
         }
-      }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=hello-world'
+                }
+            }
+        }
+
+        stage('Build & Archive Artifact') {
+            steps {
+                sh 'mvn clean package'
+                archiveArtifacts artifacts: '**/target/*.war', fingerprint: true
+            }
+        }
     }
 
-    stage('Build & Archive Artifact') {
-      steps {
-        sh 'mvn clean package'
-        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-      }
+    post {
+        failure {
+            echo '❌ Build failed. Check logs for errors.'
+        }
+        success {
+            echo '✅ Build succeeded.'
+        }
     }
-  }
-
-  post {
-    success {
-      echo '✅ Build and SonarQube analysis completed successfully.'
-    }
-    failure {
-      echo '❌ Build failed. Check logs for errors.'
-    }
-  }
 }
