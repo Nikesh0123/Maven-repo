@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE = credentials('sonarqube-token') // Optional if token-based auth
+        SONARQUBE = credentials('sonar') // Optional if token-based auth
     }
 
     stages {
