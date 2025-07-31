@@ -13,14 +13,22 @@ pipeline {
   stages {
     stage('Checkout Code') {
       steps {
-        git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Nikesh0123/Maven-repo.git'
+        // This sets env.BRANCH_NAME automatically
+        checkout([$class: 'GitSCM',
+          branches: [[name: "${env.GIT_BRANCH}"]],
+          userRemoteConfigs: [[url: 'https://github.com/Nikesh0123/Maven-repo.git']]
+        ])
       }
     }
 
     stage('SonarQube Analysis') {
       steps {
         withSonarQubeEnv("${env.SONARQUBE_ENV}") {
-          sh 'mvn clean verify sonar:sonar'
+          sh """
+            mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=hello-world \
+            -Dsonar.branch.name=${env.GIT_BRANCH}
+          """
         }
       }
     }
