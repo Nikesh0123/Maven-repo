@@ -28,7 +28,7 @@ pipeline {
     stage('Build & Archive Artifact') {
       steps {
         sh 'mvn clean package'
-        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        archiveArtifacts artifacts: 'target/*.war', fingerprint: true
       }
     }
   }
