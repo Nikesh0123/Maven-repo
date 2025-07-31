@@ -2,12 +2,12 @@ pipeline {
   agent any
 
   tools {
-    maven 'Maven 3'
+    maven 'Maven 3'  // This must match the Maven installation name in Jenkins
   }
 
   environment {
     GIT_BRANCH = 'nikesh.developer'
-    SONARQUBE_ENV = 'SonarQube'  // <-- This should match exactly with Jenkins config
+    SONARQUBE_ENV = 'SonarQube'  // This must match the Name in SonarQube Jenkins config
   }
 
   stages {
@@ -35,10 +35,10 @@ pipeline {
 
   post {
     success {
-      echo 'Build and analysis completed successfully.'
+      echo '✅ Build and SonarQube analysis completed successfully.'
     }
     failure {
-      echo 'Build failed. Please check the logs.'
+      echo '❌ Build failed. Check logs for errors.'
     }
   }
 }
