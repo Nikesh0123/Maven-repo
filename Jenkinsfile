@@ -2,35 +2,37 @@ pipeline {
   agent any
 
   tools {
-    // This should match the Maven version name configured in Jenkins > Global Tool Configuration
-    maven 'Maven 3'
+    maven 'Maven 3'  // This must match the Maven installation name in Jenkins
   }
 
   environment {
-    // Replace with your correct branch and configured SonarQube instance name
-    GIT_BRANCH = 'nikesh.developer'
-    SONARQUBE_ENV = 'Your-SonarQube-Instance-Name'
+    SONARQUBE_ENV = 'SonarQube'  // Match this to the configured SonarQube server name in Jenkins
   }
 
   stages {
-
     stage('Checkout Code') {
       steps {
-        git branch: "${env.GIT_BRANCH}", url: 'https://github.com/Nikesh0123/Maven-repo.git'
+        // In multibranch, Jenkins already checks out the branch — no need for manual checkout
+        echo "🚀 Building branch: ${env.BRANCH_NAME}"
       }
     }
 
     stage('SonarQube Analysis') {
       steps {
         withSonarQubeEnv("${env.SONARQUBE_ENV}") {
-          sh 'mvn clean verify sonar:sonar'
+          sh """
+            mvn clean verify sonar:sonar \
+              -Dsonar.projectKey=hello-world \
+              -Dsonar.branch.name=${env.BRANCH_NAME}
+          """
         }
       }
     }
 
-    stage('Build JAR') {
+    stage('Build & Archive Artifact') {
       steps {
         sh 'mvn clean package'
+        archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
       }
     }
   }
@@ -40,7 +42,7 @@ pipeline {
       echo '✅ Build and SonarQube analysis completed successfully.'
     }
     failure {
-      echo '❌ Build failed. Please check the console output for errors.'
+      echo '❌ Build failed. Check logs for errors.'
     }
   }
 }
