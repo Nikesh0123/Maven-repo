@@ -12,9 +12,9 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysi') {
+    stage('SonarQube Analysis') {
       steps {
-        withSonarQubeEnv('Your-SonarQube-Instance-Name') {
+        withSonarQubeEnv('sonar') {
           sh 'mvn sonar:sonar'
         }
       }
