@@ -6,9 +6,9 @@ pipeline {
     }
 
     environment {
-        GIT_BRANCH       = 'nikesh.developer'
+        GIT_BRANCH       = 'main'
         SONARQUBE_ENV    = 'SonarQube'     // Jenkins SonarQube config name
-        NEXUS_URL        = 'http://15.206.93.132:30001/repository/maven-releases/'
+        NEXUS_URL        = 'http://13.201.126.35:30001/repository/maven-releases/'
         NEXUS_CREDENTIALS = 'nexus-cred' // Jenkins credentials ID for Nexus
         DOCKER_REGISTRY  = 'nexus-server:8083' // Nexus Docker registry URL
         DOCKER_IMAGE     = 'myapp'
